@@ -1,6 +1,7 @@
 import UserModel from "../models/User.js";
 import userService from "../services/userService.js";
 import { validationResult } from "express-validator";
+import BlacklistToken from "../models/blacklistTokenModel.js";
 
 
 // ✅ This is the controller function that will be called when the user sends a POST request to /register   
@@ -39,7 +40,23 @@ const loginUser = async (req, res, next) => {
     }
     const token = user.generateAuthToken();
 
-    res.status(200).json({token, user});
-}
+    res.cookie('token', token);
 
-  export default {registerUser, loginUser} ; // ✅ Default export
+    res.status(200).json({token, user});
+};
+
+const getUserProfile = async (req, res, next) => {
+    res.status(200).json(req.user);
+};
+
+const logoutUser = async (req, res, next) => 
+{
+    res.clearCookie('token');
+    const token = req.cookies.token || req.headers.authorization.split(" ")[1];
+    await BlacklistToken.create({token});
+    res.status(200).json({message: "Logged out successfully"});
+
+};
+
+
+  export default {registerUser, loginUser, getUserProfile, logoutUser} ; // ✅ Default export

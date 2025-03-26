@@ -180,3 +180,117 @@ Notes
 Ensure the user’s credentials are correct.
 Passwords are hashed in the database, so direct comparison is not possible; the system uses bcrypt for validation.
 If successful, the returning token is a JWT with a 1-hour expiration. 
+
+
+
+# API Documentation
+
+---
+
+## /users/profile
+
+### Description
+This endpoint allows an authenticated user to retrieve their profile information. The request must include a valid JWT token for authentication.
+
+---
+
+### HTTP Method
+**GET**
+
+---
+
+### Endpoint
+`GET /users/profile`
+
+---
+
+### Authentication
+This endpoint requires authentication. The JWT token must be provided in one of the following ways:
+- As a cookie named `token`
+- In the `Authorization` header: `Authorization: Bearer <token>`
+
+---
+
+### Request
+No request body is required for this endpoint.
+
+---
+
+### Example Response
+**Status Code: 200 OK**
+```json
+{
+  "_id": "6123456789abcdef01234567",
+  "firstname": "John",
+  "lastname": "Doe",
+  "email": "john.doe@example.com",
+  "role": "renter",
+  "createdAt": "2025-03-26T10:00:00.000Z",
+  "updatedAt": "2025-03-26T10:00:00.000Z"
+}
+
+
+
+Possible Responses
+Success
+200 OK: Successfully retrieved user profile.
+Errors
+401 Unauthorized: Missing or invalid token
+
+{
+  "message": "Not authorized, token failed"
+}
+
+
+403 Forbidden: Token exists in the blacklist (user logged out).
+
+{
+  "message": "Not authorized, token is blacklisted"
+}
+
+Notes
+This endpoint returns the authenticated user's profile data.
+Sensitive information like passwords is not included in the response
+
+
+
+/users/logout
+Description
+This endpoint allows an authenticated user to log out by invalidating their current JWT token. The token is added to a blacklist to prevent reuse.
+
+HTTP Method
+GET
+
+Endpoint
+GET /users/logout
+
+Authentication
+This endpoint requires authentication. The JWT token must be provided in one of the following ways:
+
+As a cookie named token
+In the Authorization header: Authorization: Bearer <token>
+Request
+No request body is required for this endpoint.
+
+Example Response
+Status Code: 200 OK
+
+{
+  "message": "Logged out successfully"
+}
+
+Possible Responses
+Success
+200 OK: Successfully logged out.
+Errors
+401 Unauthorized: Missing or invalid token.
+
+{
+  "message": "Not authorized, token failed"
+}
+
+Notes
+This endpoint clears the token cookie if it exists.
+The JWT token is added to a blacklist in the database to prevent its reuse.
+Blacklisted tokens automatically expire after 24 hours using a TTL index in the database.
+After logout, any subsequent requests using the same token will be rejected.

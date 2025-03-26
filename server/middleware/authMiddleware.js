@@ -1,35 +1,32 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const protect = async (req, res, next) => {
-  let token;
+const authUser = async (req, res, next) => {
+  const token = req.cookies?.token || req.headers?.authorization?.split(" ")[1]; // ✅ Extract token from cookie or header
+  if (!token) {
+    return res.status(401).json({ message: "Not authorized" });
+  }
 
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const isBlacklisted = await User.findOne({token: token});
+  if(isBlacklisted){
+    return res.status(401).json({message: "Unauthorized"});
+  };
+  
+  try{
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // ✅ Verify token
+    const user = await User.findById(decoded.id); // ✅ Find user by id
+    req.user = user; // ✅ Attach user to req object
+    next();
 
-      req.user = await User.findById(decoded.id).select("-password");
-      next();
-    } catch (error) {
-      res.status(401).json({ message: "Not authorized, token failed" });
-    }
-  } else {
-    res.status(401).json({ message: "Not authorized, no token" });
+  }catch (error) {
+    return res.status(401).json({message: "Unauthorized"});
   }
 };
 
-// Role-Based Access Control
-export const checkRole = (roles) => (req, res, next) => {
-  if (!roles.includes(req.user.role)) {
-    return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
-  }
-  next();
-};
 
 
-
-export default protect;
+export default authUser;
