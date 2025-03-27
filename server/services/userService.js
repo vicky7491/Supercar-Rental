@@ -1,8 +1,8 @@
 import UserModel from "../models/User.js";
 
 const userService = {
-  createUser: async ({ firstname, lastname, email, password, role }) => {
-    if (!firstname || !lastname || !email || !password || !role) {
+  createUser: async ({ firstname, lastname, email, password, role, aadharCard }) => {
+    if (!firstname || !lastname || !email || !password || !role || !aadharCard) {
       throw new Error("All fields are required");
     }
 
@@ -18,7 +18,8 @@ const userService = {
       lastname,
       email,
       password,
-      role
+      role,
+      aadharCard
     });
 
     return user;

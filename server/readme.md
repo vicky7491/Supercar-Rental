@@ -1,23 +1,24 @@
-# /users/register
+# API Documentation
 
-### Description
-This endpoint allows a new user to register an account by providing their details such as name, email, password, and role. The user will receive a token upon successful registration, which can be used for authentication in subsequent requests.
-
----
-
-### HTTP Method
-**POST**
+## Overview
+This document provides detailed information about the API endpoints for the Supercar Rental application. It includes descriptions, request/response formats, and possible error responses for each endpoint.
 
 ---
 
-### Endpoint
-`POST /users/register`
+## **User Routes**
 
----
+### **1. Register a User**
 
-### Request Body
-The request body should be in JSON format and include the following fields:
+#### **Description**
+Allows a new user to register an account by providing their details. A token is returned upon successful registration for authentication.
 
+#### **HTTP Method**
+`POST`
+
+#### **Endpoint**
+`/users/register`
+
+#### **Request Body**
 ```json
 {
   "fullname": {
@@ -30,7 +31,7 @@ The request body should be in JSON format and include the following fields:
 }
 ```
 
-Example:
+**Example Request:**
 ```json
 {
   "fullname": {
@@ -43,254 +44,232 @@ Example:
 }
 ```
 
-Field Descriptions:
-fullname.firstname: The first name of the user. Must be a string with a minimum length of 3 characters.
-fullname.lastname: The last name of the user. Must be a string with a minimum length of 3 characters.
-email: The email address of the user. Must be a valid email format and unique.
-password: The password for the user account. Must be a string with a minimum length of 5 characters.
-role: The role of the user. Must be either "seller" or "renter".
-
-
-Example Request
-
-{
-  "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
-  },
-  "email": "john.doe@example.com",
-  "password": "securepassword",
-  "role": "renter"
-}
-
-
-
----
-
-### Possible Responses
-
-#### Success
-- **201 Created**: The user was successfully registered. Returns a token and user details.
-
-#### Errors
+#### **Possible Responses**
+- **201 Created**: User registered successfully. Returns a token and user details.
 - **400 Bad Request**: Validation failed or missing/invalid data.
-  ```json
-  {
-    "errors": [
-      {
-        "msg": "First name must be at least 3 characters long",
-        "param": "fullname.firstname",
-        "location": "body"
-      }
-    ]
-  }
-
-
-409 Conflict: Email already exists.
-
-{
-  "error": "Email already exists"
-}
-
-Notes
-Ensure the email field is unique for each user.
-Passwords are hashed before being stored in the database.
-The token is a JSON Web Token (JWT) that expires in 1 hour
-
-
-
-
-# /users/login
-
-### Description
-This endpoint allows a registered user to log in by providing their email and password. Upon a successful login, a JSON Web Token (JWT) is generated, which can be used for subsequent authenticated requests.
+- **409 Conflict**: Email already exists.
 
 ---
 
-### HTTP Method
-**POST**
+### **2. Login a User**
 
----
+#### **Description**
+Allows a registered user to log in by providing their email and password. A JWT token is returned upon successful login.
 
-### Endpoint
-`POST /users/login`
+#### **HTTP Method**
+`POST`
 
----
+#### **Endpoint**
+`/users/login`
 
-### Request Body
-The request body should be in JSON format and include the following fields:
-
+#### **Request Body**
 ```json
 {
   "email": "Valid email format",
   "password": "string (min 6 chars)"
 }
+```
 
-Field Descriptions:
-email: The registered email address of the user. Must be in a valid email format.
-password: The password for the user account. Must be a string with a minimum length of 6 characters.
-
-
-Example Request:
-
+**Example Request:**
+```json
 {
   "email": "john.doe@example.com",
   "password": "securepassword"
 }
+```
 
-Example Response
-Status Code: 200 OK
-
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "_id": "string",
-    "firstname": "John",
-    "lastname": "Doe",
-    "email": "john.doe@example.com",
-    "role": "renter",
-    "createdAt": "2025-03-26T10:00:00.000Z",
-    "updatedAt": "2025-03-26T10:00:00.000Z"
-  }
-}
-
-Possible Responses
-Success
-200 OK: The user was successfully authenticated. Returns a token and user details.
-Errors
-400 Bad Request: Validation failed or missing/invalid data
-
-{
-  "errors": [
-    {
-      "msg": "Please enter a valid email",
-      "param": "email",
-      "location": "body"
-    }
-  ]
-}
-
-401 Unauthorized: Invalid email or password
-
-{
-  "message": "Invalid email or password"
-}
-
-Notes
-Ensure the user’s credentials are correct.
-Passwords are hashed in the database, so direct comparison is not possible; the system uses bcrypt for validation.
-If successful, the returning token is a JWT with a 1-hour expiration. 
-
-
-
-# API Documentation
+#### **Possible Responses**
+- **200 OK**: User authenticated successfully. Returns a token and user details.
+- **400 Bad Request**: Validation failed or missing/invalid data.
+- **401 Unauthorized**: Invalid email or password.
 
 ---
 
-## /users/profile
+### **3. Get User Profile**
 
-### Description
-This endpoint allows an authenticated user to retrieve their profile information. The request must include a valid JWT token for authentication.
+#### **Description**
+Retrieves the profile information of an authenticated user.
 
----
+#### **HTTP Method**
+`GET`
 
-### HTTP Method
-**GET**
+#### **Endpoint**
+`/users/profile`
 
----
+#### **Authentication**
+Requires a valid JWT token provided as:
+- A cookie named `token`, or
+- In the `Authorization` header: `Bearer <token>`
 
-### Endpoint
-`GET /users/profile`
-
----
-
-### Authentication
-This endpoint requires authentication. The JWT token must be provided in one of the following ways:
-- As a cookie named `token`
-- In the `Authorization` header: `Authorization: Bearer <token>`
-
----
-
-### Request
-No request body is required for this endpoint.
+#### **Possible Responses**
+- **200 OK**: Successfully retrieved user profile.
+- **401 Unauthorized**: Missing or invalid token.
+- **403 Forbidden**: Token blacklisted (user logged out).
 
 ---
 
-### Example Response
-**Status Code: 200 OK**
+### **4. Logout a User**
+
+#### **Description**
+Logs out an authenticated user by invalidating their current JWT token.
+
+#### **HTTP Method**
+`GET`
+
+#### **Endpoint**
+`/users/logout`
+
+#### **Authentication**
+Requires a valid JWT token provided as:
+- A cookie named `token`, or
+- In the `Authorization` header: `Bearer <token>`
+
+#### **Possible Responses**
+- **200 OK**: Successfully logged out.
+- **401 Unauthorized**: Missing or invalid token.
+
+---
+
+## **Vehicle Routes**
+
+### **1. Create a Vehicle**
+
+#### **Description**
+Allows a user to create a new vehicle listing.
+
+#### **HTTP Method**
+`POST`
+
+#### **Endpoint**
+`/vehicles`
+
+#### **Request Body**
 ```json
 {
-  "_id": "6123456789abcdef01234567",
-  "firstname": "John",
-  "lastname": "Doe",
-  "email": "john.doe@example.com",
-  "role": "renter",
-  "createdAt": "2025-03-26T10:00:00.000Z",
-  "updatedAt": "2025-03-26T10:00:00.000Z"
+  "vehicleType": "string (supercar, car, superbike, bike)",
+  "brand": "string",
+  "model": "string",
+  "hourlyRate": "number (minimum 100)",
+  "color": "string (min 3 characters)",
+  "plate": "string (e.g., MH02AB1234)",
+  "capacity": "number (minimum 1)",
+  "features": {
+    "insuranceValid": "boolean",
+    "transmission": "string (manual or automatic)"
+  }
 }
+```
 
-
-
-Possible Responses
-Success
-200 OK: Successfully retrieved user profile.
-Errors
-401 Unauthorized: Missing or invalid token
-
+**Example Request:**
+```json
 {
-  "message": "Not authorized, token failed"
+  "vehicleType": "supercar",
+  "brand": "Ferrari",
+  "model": "488 Spider",
+  "hourlyRate": 5000,
+  "color": "Red",
+  "plate": "MH02AB1234",
+  "capacity": 2,
+  "features": {
+    "insuranceValid": true,
+    "transmission": "automatic"
+  }
 }
+```
 
+#### **Possible Responses**
+- **201 Created**: Vehicle created successfully.
+- **400 Bad Request**: Validation failed or missing/invalid data.
+- **500 Internal Server Error**: Server error while creating the vehicle.
 
-403 Forbidden: Token exists in the blacklist (user logged out).
+---
 
+### **2. Get All Vehicles**
+
+#### **Description**
+Retrieves a list of all vehicles.
+
+#### **HTTP Method**
+`GET`
+
+#### **Endpoint**
+`/vehicles`
+
+#### **Possible Responses**
+- **200 OK**: Successfully retrieved vehicles.
+- **500 Internal Server Error**: Server error while fetching vehicles.
+
+---
+
+### **3. Get Vehicle by ID**
+
+#### **Description**
+Retrieves a specific vehicle by its ID.
+
+#### **HTTP Method**
+`GET`
+
+#### **Endpoint**
+`/vehicles/:id`
+
+#### **Possible Responses**
+- **200 OK**: Successfully retrieved the vehicle.
+- **404 Not Found**: Vehicle not found.
+- **500 Internal Server Error**: Server error while fetching the vehicle.
+
+---
+
+### **4. Update Vehicle**
+
+#### **Description**
+Allows a user to update an existing vehicle.
+
+#### **HTTP Method**
+`PUT`
+
+#### **Endpoint**
+`/vehicles/:id`
+
+#### **Request Body**
+Include only the fields to be updated.
+
+**Example Request:**
+```json
 {
-  "message": "Not authorized, token is blacklisted"
+  "color": "Blue",
+  "hourlyRate": 6000
 }
+```
 
-Notes
-This endpoint returns the authenticated user's profile data.
-Sensitive information like passwords is not included in the response
+#### **Possible Responses**
+- **200 OK**: Vehicle updated successfully.
+- **404 Not Found**: Vehicle not found or unauthorized.
+- **500 Internal Server Error**: Server error while updating the vehicle.
 
+---
 
+### **5. Delete Vehicle**
 
-/users/logout
-Description
-This endpoint allows an authenticated user to log out by invalidating their current JWT token. The token is added to a blacklist to prevent reuse.
+#### **Description**
+Allows a user to delete an existing vehicle.
 
-HTTP Method
-GET
+#### **HTTP Method**
+`DELETE`
 
-Endpoint
-GET /users/logout
+#### **Endpoint**
+`/vehicles/:id`
 
-Authentication
-This endpoint requires authentication. The JWT token must be provided in one of the following ways:
+#### **Possible Responses**
+- **200 OK**: Vehicle deleted successfully.
+- **404 Not Found**: Vehicle not found or unauthorized.
+- **500 Internal Server Error**: Server error while deleting the vehicle.
 
-As a cookie named token
-In the Authorization header: Authorization: Bearer <token>
-Request
-No request body is required for this endpoint.
+---
 
-Example Response
-Status Code: 200 OK
+## **Notes**
+- All sensitive data, such as passwords, are securely hashed.
+- JWT tokens expire after 1 hour and are blacklisted upon logout.
+- Ensure proper validation for all input fields to avoid errors.
+- Blacklisted tokens are automatically removed after 24 hours using a TTL index in the database.
+- Use appropriate HTTP status codes for all responses to ensure clarity.
 
-{
-  "message": "Logged out successfully"
-}
-
-Possible Responses
-Success
-200 OK: Successfully logged out.
-Errors
-401 Unauthorized: Missing or invalid token.
-
-{
-  "message": "Not authorized, token failed"
-}
-
-Notes
-This endpoint clears the token cookie if it exists.
-The JWT token is added to a blacklist in the database to prevent its reuse.
-Blacklisted tokens automatically expire after 24 hours using a TTL index in the database.
-After logout, any subsequent requests using the same token will be rejected.

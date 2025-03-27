@@ -11,8 +11,8 @@ import BlacklistToken from "../models/blacklistTokenModel.js";
         return res.status(400).json({errors: errors.array()});
     }
     
-    const { fullname , email, password, role } = req.body;
-
+    const { fullname , email, password, role, aadharCard } = req.body;
+    console.log(req.body);
     const hashedPassword = await UserModel.hashPassword(password);
 
     const user = await userService.createUser({
@@ -20,7 +20,8 @@ import BlacklistToken from "../models/blacklistTokenModel.js";
         lastname: fullname.lastname,
         email,
         password: hashedPassword,
-        role
+        role,
+        aadharCard
     });
     const token = user.generateAuthToken();
     res.status(201).json({ token, user});
@@ -52,7 +53,7 @@ const getUserProfile = async (req, res, next) => {
 const logoutUser = async (req, res, next) => 
 {
     res.clearCookie('token');
-    const token = req.cookies.token || req.headers.authorization.split(" ")[1];
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
     await BlacklistToken.create({token});
     res.status(200).json({message: "Logged out successfully"});
 

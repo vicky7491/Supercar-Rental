@@ -4,30 +4,52 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
   {
-   
-      firstname: {
-        type: String,
-        required: [true, "First name is required"],
-        minlength: [3, "First name must be at least 3 characters long"],
-      },
-      lastname: {
-        type: String,
-        required: [true, "Last name is required"],
-        minlength: [3, "Last name must be at least 3 characters long"],
-      },
-    
-    email: {
+    firstname: {
       type: String,
-      required: true,
-      unique: true,
-      minlength: [4, "Email must be at least 4 characters long"],
+      required: [true, "First name is required"],
+      minlength: [3, "First name must be at least 3 characters long"],
+    },
+    lastname: {
+      type: String,
+      required: [true, "Last name is required"],
+      minlength: [3, "Last name must be at least 3 characters long"],
     },
 
-    password: { type: String, required: true, select: false, minlength:5 },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Invalid email format",
+      ],
+      lowercase: true, // Store emails in lowercase
+    },
+
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters"],
+      select: false,
+      validate: {
+        validator: function (v) {
+          return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(v);
+        },
+        message: "Password must contain uppercase, lowercase, and a number",
+      },
+    },
 
     role: { type: String, required: true, enum: ["seller", "renter"] },
-
-    socketId: { type: String },
+    aadharCard: {
+      type: String,
+      required: [true, "Aadhar card is required"],
+      validate: {
+        validator: function (v) {
+          return /^\d{12}$/.test(v);
+        },
+        message: "Aadhar must be 12 digits",
+      },
+    },
   },
   { timestamps: true }
 );
@@ -47,8 +69,7 @@ userSchema.methods.comparePassword = async function (password) {
 // Hash password before saving
 userSchema.statics.hashPassword = async function (password) {
   return await bcrypt.hash(password, 10);
-}
-
+};
 
 const UserModel = mongoose.model("User", userSchema);
 export default UserModel;
