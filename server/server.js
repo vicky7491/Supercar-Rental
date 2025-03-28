@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import vehicleRoutes from "./routes/vehicleRoutes.js";
-
+import {bookingRoutes} from "./routes/bookingRoutes.js"; // Added booking routes
 dotenv.config();
 
 // ✅ Connect to Database First
@@ -26,6 +26,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes); // Missing in your code, added it
 app.use('/vehicles', vehicleRoutes); // Changed from singular `/vehicle` to plural `/vehicles`
+app.use("/bookings", bookingRoutes); // Added booking routes
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

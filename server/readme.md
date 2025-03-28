@@ -273,3 +273,196 @@ Allows a user to delete an existing vehicle.
 - Blacklisted tokens are automatically removed after 24 hours using a TTL index in the database.
 - Use appropriate HTTP status codes for all responses to ensure clarity.
 
+
+
+---
+
+## **Booking Routes**
+
+### **1. Create a Booking**
+
+#### **Description**
+Allows a user to create a new booking for a vehicle. The booking ensures that the vehicle is reserved for the specified time period.
+
+#### **HTTP Method**
+`POST`
+
+#### **Endpoint**
+`/bookings`
+
+#### **Request Body**
+```json
+{
+  "vehicleId": "string (valid MongoDB ObjectId)",
+  "startTime": "ISO8601 date format (e.g., 2025-03-28T10:00:00Z)",
+  "endTime": "ISO8601 date format (e.g., 2025-03-28T14:00:00Z)"
+}
+
+
+Example Request: 
+
+{
+  "vehicleId": "6123456789abcdef01234567",
+  "startTime": "2025-03-28T10:00:00Z",
+  "endTime": "2025-03-28T14:00:00Z"
+}
+
+ 
+ Example resopnse:
+
+ Status Code: 201 Created
+
+ {
+  "_id": "6123456789abcdef01234568",
+  "user": "6123456789abcdef01234567",
+  "vehicle": "6123456789abcdef01234567",
+  "startTime": "2025-03-28T10:00:00Z",
+  "endTime": "2025-03-28T14:00:00Z",
+  "totalPrice": 2000,
+  "status": "pending",
+  "createdAt": "2025-03-27T10:00:00.000Z",
+  "updatedAt": "2025-03-27T10:00:00.000Z"
+}
+
+
+Possible Responses
+201 Created: Booking created successfully.
+400 Bad Request: Validation failed or overlapping booking exists
+
+{
+  "message": "Vehicle is already booked for this time slot"
+}
+
+404 Not Found: Vehicle not found
+
+{
+  "message": "Vehicle not found"
+}
+
+
+500 Internal Server Error: Server error while creating the booking.
+
+### **2. Get All Bookings**
+
+#### **Description**
+Retrieves a list of all bookings made by the authenticated user.
+
+#### **HTTP Method**
+`GET`
+
+#### **Endpoint**
+`/bookings`
+
+#### **Authentication**
+Requires a valid JWT token provided as:
+- A cookie named `token`, or
+- In the `Authorization` header: `Bearer <token>`
+
+#### **Possible Responses**
+- **200 OK**: Successfully retrieved bookings.
+  ```json
+  [
+    {
+      "_id": "6123456789abcdef01234568",
+      "user": "6123456789abcdef01234567",
+      "vehicle": {
+        "_id": "6123456789abcdef01234567",
+        "brand": "Ferrari",
+        "model": "488 Spider",
+        "hourlyRate": 5000
+      },
+      "startTime": "2025-03-28T10:00:00Z",
+      "endTime": "2025-03-28T14:00:00Z",
+      "totalPrice": 2000,
+      "status": "pending",
+      "createdAt": "2025-03-27T10:00:00.000Z",
+      "updatedAt": "2025-03-27T10:00:00.000Z"
+    }
+  ]
+  ```
+- **401 Unauthorized**: Missing or invalid token.
+- **500 Internal Server Error**: Server error while fetching bookings.
+
+
+
+### **3. Get User's Bookings**
+
+#### **Description**
+Retrieves all bookings made by a specific user. This endpoint is accessible only by admins.
+
+#### **HTTP Method**
+`GET`
+
+#### **Endpoint**
+`/bookings/user/:userId`
+
+#### **Authentication**
+Requires a valid JWT token with admin privileges provided as:
+- A cookie named `token`, or
+- In the `Authorization` header: `Bearer <token>`
+
+#### **Possible Responses**
+- **200 OK**: Successfully retrieved user's bookings.
+  ```json
+  [
+    {
+      "_id": "6123456789abcdef01234568",
+      "user": "6123456789abcdef01234567",
+      "vehicle": {
+        "_id": "6123456789abcdef01234567",
+        "brand": "Ferrari",
+        "model": "488 Spider",
+        "hourlyRate": 5000
+      },
+      "startTime": "2025-03-28T10:00:00Z",
+      "endTime": "2025-03-28T14:00:00Z",
+      "totalPrice": 2000,
+      "status": "pending",
+      "createdAt": "2025-03-27T10:00:00.000Z",
+      "updatedAt": "2025-03-27T10:00:00.000Z"
+    }
+  ]
+  ```
+- **401 Unauthorized**: Missing or invalid token.
+- **403 Forbidden**: Insufficient privileges to access this resource.
+- **404 Not Found**: User not found.
+- **500 Internal Server Error**: Server error while fetching user's bookings.
+
+
+### **4. Cancel a Booking**
+
+#### **Description**
+Allows a user to cancel an existing booking. The booking status is updated to "canceled."
+
+#### **HTTP Method**
+`DELETE`
+
+#### **Endpoint**
+`/bookings/:id`
+
+#### **Authentication**
+Requires a valid JWT token provided as:
+- A cookie named `token`, or
+- In the `Authorization` header: `Bearer <token>`
+
+#### **Possible Responses**
+- **200 OK**: Booking canceled successfully.
+  ```json
+  {
+    "message": "Booking canceled successfully"
+  }
+  ```
+- **400 Bad Request**: Booking cannot be canceled (e.g., already started or completed).
+  ```json
+  {
+    "message": "Booking cannot be canceled at this stage"
+  }
+  ```
+- **404 Not Found**: Booking not found.
+  ```json
+  {
+    "message": "Booking not found"
+  }
+  ```
+- **401 Unauthorized**: Missing or invalid token.
+- **500 Internal Server Error**: Server error while canceling the booking.
