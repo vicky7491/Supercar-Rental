@@ -466,3 +466,139 @@ Requires a valid JWT token provided as:
   ```
 - **401 Unauthorized**: Missing or invalid token.
 - **500 Internal Server Error**: Server error while canceling the booking.
+
+
+---
+
+## **Email Confirmation**
+
+### **Description**
+The application uses Nodemailer to send email confirmations for bookings. When a user successfully creates a booking, they receive an email with the booking details, including the vehicle information, start and end times, and the total price.
+
+---
+
+### **Email Service Configuration**
+
+The email service is configured using the `nodemailer` library. The application uses environment variables to securely store email credentials.
+
+#### **Configuration File**
+The email configuration is located in `server/config/nodemailer.js`:
+
+```javascript
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  service: "gmail", // Use your email provider (e.g., Gmail, SMTP)
+  auth: {
+    user: process.env.EMAIL_USER, // Your email address
+    pass: process.env.EMAIL_PASS, // App password or email password
+  },
+});
+
+export default transporter;
+
+
+Environment Variables
+The following environment variables must be set in the .env file:
+
+EMAIL_USER=your-email@example.com
+EMAIL_PASS=your-email-password
+
+Email Sending Process
+When a booking is successfully created, an email is sent to the user with the booking details. The email includes:
+
+Vehicle information (brand and model)
+Booking start and end times
+Total price
+A link to view the booking
+
+
+Example Email Sending Code
+The email is sent using the transporter.sendMail() method in the createBooking function:
+
+const mailOptions = {
+  from: process.env.EMAIL_USER,
+  to: req.user.email,
+  subject: "Booking Confirmation - Supercar Rental",
+  html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9;">
+      <h2 style="color: #27ae60; text-align: center;">Booking Confirmed ✅</h2>
+      <p>Dear <strong>${req.user.firstname}</strong>,</p>
+      <p>Your booking for <strong style="color: #e67e22;">${vehicle.brand} ${vehicle.model}</strong> has been successfully confirmed!</p>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Start Time:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(startTime).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>End Time:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(endTime).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Total Price:</strong></td>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong style="color: #2c3e50;">₹${totalPrice.toLocaleString("en-IN")}</strong></td>
+        </tr>
+      </table>
+      <p style="margin-top: 20px;">We appreciate your trust in <strong>Supercar Rental</strong>. Enjoy your ride! 🚗💨</p>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="https://supercarrental.com/bookings/${booking._id}" 
+           style="display: inline-block; padding: 12px 24px; background: #3498db; color: white; text-decoration: none; font-size: 16px; border-radius: 5px;">
+          View Your Booking
+        </a>
+      </div>
+      <p style="margin-top: 20px; font-size: 14px; color: #555;">If you have any questions, feel free to contact us.</p>
+    </div>
+  `,
+};
+
+transporter.sendMail(mailOptions, (err, info) => {
+  if (err) {
+    console.error("Email failed to send:", err);
+  } else {
+    console.log("Booking confirmation email sent:", info.response);
+  }
+});
+
+
+Example Request
+When a user creates a booking, the email is automatically sent. Here's an example request to create a booking:
+
+Request:
+
+{
+  "vehicleId": "6123456789abcdef01234567",
+  "startTime": "2025-03-28T10:00:00Z",
+  "endTime": "2025-03-28T14:00:00Z"
+}
+
+Example Response
+If the email is sent successfully, the booking is created, and the response includes the booking details:
+
+Response: Status Code: 201 Created
+
+{
+  "_id": "6123456789abcdef01234568",
+  "user": "6123456789abcdef01234567",
+  "vehicle": "6123456789abcdef01234567",
+  "startTime": "2025-03-28T10:00:00Z",
+  "endTime": "2025-03-28T14:00:00Z",
+  "totalPrice": 2000,
+  "status": "pending",
+  "createdAt": "2025-03-27T10:00:00.000Z",
+  "updatedAt": "2025-03-27T10:00:00.000Z"
+}
+
+Possible Errors
+500 Internal Server Error: If the email fails to send, the booking is still created, but the error is logged.
+
+{
+  "message": "Booking created, but email failed to send"
+}
+
+Ensure that the EMAIL_USER and EMAIL_PASS(App password) environment variables are correctly set.
+Use app-specific passwords for Gmail or other providers to avoid authentication issues.
+The email template can be customized to include additional details or branding.
+Emails are sent asynchronously, so the booking process is not delayed.
