@@ -1,7 +1,7 @@
 
 import { BrowserRouter, RouterProvider } from "react-router-dom"
 
-import Login from "./pages/auth/Login"
+
 import AppRoutes from "./routes/routes"
 
 

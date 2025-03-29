@@ -1,12 +1,106 @@
-# React + Vite
+# Client Documentation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## **Authentication Pages**
 
-Currently, two official plugins are available:
+### **1. Signup Page**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### **Description**
+The Signup page allows new users to create an account by providing their details such as first name, last name, email, password, and role. If the user selects the "Seller" role, they are also required to provide their Aadhar card number.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+#### **Route**
+`/signup`
+
+---
+
+#### **Form Fields**
+- **First Name**: Text input (required, minimum 3 characters).
+- **Last Name**: Text input (required, minimum 3 characters).
+- **Email**: Email input (required, must be a valid email format).
+- **Password**: Password input (required, minimum 6 characters).
+- **Role**: Radio buttons to select either "Renter" or "Seller".
+- **Aadhar Card**: Text input (required only if the role is "Seller", must be 12 digits).
+
+---
+
+#### **Example Request**
+When the user submits the form, the following request is sent to the backend:
+
+**POST Request to `/users/register`:**
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "securepassword",
+  "role": "renter"
+}
+
+
+if the role is "seller":
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "securepassword",
+  "role": "seller",
+  "aadharCard": "123456789012"
+}
+
+Example Response
+Status Code: 201 Created
+{
+  "message": "Signup successful! Please login."
+}
+
+### **2. Login Page**
+
+#### **Description**
+The Login page allows existing users to access their accounts by providing their email and password.
+
+---
+
+#### **Route**
+`/login`
+
+---
+
+#### **Form Fields**
+- **Email**: Email input (required, must be a valid email format).
+- **Password**: Password input (required, minimum 6 characters).
+
+---
+
+#### **Example Request**
+When the user submits the form, the following request is sent to the backend:
+
+**POST Request to `/users/login`:**
+```json
+{
+    "email": "john.doe@example.com",
+    "password": "securepassword"
+}
+```
+
+---
+
+#### **Example Response**
+**Status Code: 200 OK**
+```json
+{
+    "message": "Login successful!",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Status Code: 401 Unauthorized**
+```json
+{
+    "message": "Invalid email or password."
+}
+```
