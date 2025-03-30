@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isChecked, setIsChecked] = useState(false); // Checkbox state
   const navigate = useNavigate();
 
   const loginUser = async () => {
@@ -15,18 +14,14 @@ const Login = () => {
       alert("Please fill in all fields.");
       return;
     }
-    if (!isChecked) {
-      alert("You must agree to the terms and conditions.");
-      return;
-    }
-
+   
     try {
       const response = await axios.post("http://localhost:3000/users/login", {
         email,
         password,
       });
       
-      navigate("/dashboard"); // Redirect after login
+      navigate("/home"); // Redirect after login
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     }
