@@ -12,6 +12,11 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Menu, Search, Globe, Star, Facebook, Twitter, Instagram } from "lucide-react";
+import Header from "../../pages/home-view/Header";
+
+
+
+
 
 export default function Home() {
   const cars = [
@@ -49,52 +54,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="sticky top-0 bg-white shadow-sm z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <h1 className="text-2xl font-bold text-blue-600">CarRental</h1>
-            
-            <NavigationMenu className="hidden md:block">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink href="/" className="px-4 py-2 text-gray-600 hover:text-blue-600">
-                    Home
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink href="/cars" className="px-4 py-2 text-gray-600 hover:text-blue-600">
-                    Cars
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink href="/about" className="px-4 py-2 text-gray-600 hover:text-blue-600">
-                    About
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink href="/contact" className="px-4 py-2 text-gray-600 hover:text-blue-600">
-                    Contact
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" className="hidden md:flex">
-              <Globe className="w-4 h-4 mr-2" />
-              EN
-            </Button>
-            <Avatar>
-              <AvatarImage src="/user.jpg" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-            <Menu className="md:hidden" />
-          </div>
-        </div>
-      </header>
-
+      <Header />
       {/* Hero Section */}
       <div className="relative h-[600px] bg-gray-900">
         <div className="absolute inset-0 bg-black/60">

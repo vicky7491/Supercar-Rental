@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Signup = () => {
   const [firstname, setFirstname] = useState("");
@@ -16,7 +17,10 @@ const Signup = () => {
 
   const handleSignup = async () => {
     if (!firstname || !lastname || !email || !password || !role) {
-      alert("Please fill all fields.");
+      toast.error("Please fill all fields.", {
+        position: "top-center",
+        duration: 2000,
+      });
       return;
     }
     try {
@@ -26,11 +30,19 @@ const Signup = () => {
         password,
         role,
         ...(role === "seller" && { aadharCard }), // Include aadharCard only if role is seller
+      }, 
+      { withCredentials: true });
+      toast.success("Signup successful! Please login.", {
+        position: "top-center",
+        duration: 5000,
       });
-      alert("Signup successful! Please login.");
-      // navigate("/login");
+      navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.message || "Signup failed");
+      console.log(error.response);
+      toast.error(error.response?.data?.message || "Signup failed", {
+        position: "top-center",
+        duration: 3000,
+      });
     }
   };
 

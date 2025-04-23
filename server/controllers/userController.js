@@ -15,6 +15,12 @@ import BlacklistToken from "../models/blacklistTokenModel.js";
     console.log(req.body);
     const hashedPassword = await UserModel.hashPassword(password);
 
+
+      // Check aadharCard only if role is seller
+  if (role === "seller" && !aadharCard) {
+    throw new Error("Aadhar card is required for sellers");
+  }
+
     const user = await userService.createUser({
         firstname: fullname.firstname,
         lastname: fullname.lastname,
@@ -25,6 +31,8 @@ import BlacklistToken from "../models/blacklistTokenModel.js";
     });
     const token = user.generateAuthToken();
     res.status(201).json({ token, user});
+
+   
   };
   
 const loginUser = async (req, res, next) => {

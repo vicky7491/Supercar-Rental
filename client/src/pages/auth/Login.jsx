@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +12,10 @@ const Login = () => {
 
   const loginUser = async () => {
     if (!email || !password) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all fields.", {
+        position: "top-center",
+        duration: 2000,
+      });
       return;
     }
    
@@ -19,11 +23,20 @@ const Login = () => {
       const response = await axios.post("http://localhost:3000/users/login", {
         email,
         password,
-      });
+      }, 
+      { withCredentials: true });
       
-      navigate("/home"); // Redirect after login
+      toast.success("Login successful!", {
+        position: "top-center",
+        duration: 2000,
+      });
+      navigate("/home");
     } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+      console.error("Login error:", error);
+      toast.error(error.response?.data?.message || "Login failed", {
+        position: "top-center",
+        duration: 3000,
+      });
     }
   };
 
@@ -47,19 +60,6 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
-        {/* Checkbox for Terms & Conditions */}
-        {/* <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="terms"
-            checked={isChecked}
-            onChange={(e) => setIsChecked(e.target.checked)}
-          />
-          <label htmlFor="terms" className="text-sm text-gray-700">
-            I agree to the terms and conditions
-          </label>
-        </div> */}
 
         <Button onClick={loginUser} className="w-full">
           Login

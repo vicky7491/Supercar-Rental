@@ -40,14 +40,14 @@ const userSchema = new mongoose.Schema(
     },
 
     role: { type: String, required: true, enum: ["seller", "renter"] },
-    aadharCard: {
+
+     aadharCard: {
       type: String,
-      required: [true, "Aadhar card is required"],
       validate: {
         validator: function (v) {
-          return /^\d{12}$/.test(v);
+          return this.role === "seller" ? /^\d{12}$/.test(v) : true;
         },
-        message: "Aadhar must be 12 digits",
+        message: "Aadhar must be 12 digits for sellers",
       },
     },
   },

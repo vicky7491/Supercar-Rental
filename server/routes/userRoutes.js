@@ -14,7 +14,10 @@ router.post("/register" , [
     body('fullname.lastname').isLength({ min: 3 }).withMessage("Last name must be at least 3 characters long"),
     body('password').isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
     body('role').isIn(["seller", "renter"]).withMessage("Role must be either seller or renter"),
-    body('aadharCard').isLength({ min: 12, max:12 }).withMessage("Aadhar card must be at least 12 characters long")
+    body('aadharCard')
+      .if((value, { req }) => req.body.role === "seller")
+      .isLength({ min: 12, max: 12 })
+      .withMessage("Aadhar card must be exactly 12 digits")
 ], userController.registerUser);
 
 router.post("/login", [

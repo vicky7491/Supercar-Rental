@@ -17,7 +17,10 @@ connectDB();
 const app = express();
 
 // ✅ Middleware Setup (correct order)
-app.use(cors()); // Enable CORS before other middlewares
+app.use(cors({
+    origin: "http://localhost:5173", // ✅ Set this to your frontend URL
+    credentials: true // ✅ Allow cookies
+}));
 app.use(express.json()); // Parse JSON data
 app.use(cookieParser()); // Parse cookies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
