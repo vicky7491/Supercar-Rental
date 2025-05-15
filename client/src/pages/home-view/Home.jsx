@@ -1,142 +1,94 @@
-// app/page.tsx
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import CustomFooter from "@/components/ui/footer";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Menu, Search, Globe, Star, Facebook, Twitter, Instagram } from "lucide-react";
+import { Menu, Search, Globe, Star, Heart, Shield, Bike, MapPin, Clock, BadgeCheck } from "lucide-react";
 import Header from "../../pages/home-view/Header";
-
-
+import FeatureCar from "../../pages/home-view/FeatureCar";
 
 
 
 export default function Home() {
-  const cars = [
-    {
-      id: 1,
-      name: "Toyota Camry 2023",
-      price: 89,
-      seats: 4,
-      transmission: "Automatic",
-      fuel: "4.8 L/100km",
-      rating: 4.5,
-      image: "/camry.jpg",
-    },
-    {
-      id: 2,
-      name: "BMW X5 2023",
-      price: 129,
-      seats: 5,
-      transmission: "Automatic",
-      fuel: "6.2 L/100km",
-      rating: 4.8,
-      image: "/x5.jpg",
-    },
-    {
-      id: 3,
-      name: "Mercedes C-Class",
-      price: 109,
-      seats: 4,
-      transmission: "Automatic",
-      fuel: "5.1 L/100km",
-      rating: 4.6,
-      image: "/c-class.jpg",
-    },
+  
+  const features = [
+    { icon: Shield, title: "Premium Insurance", description: "Full coverage included" },
+    { icon: BadgeCheck, title: "Quality Guaranteed", description: "Verified vehicles only" },
+    { icon: Clock, title: "24/7 Support", description: "Always here to help" },
+    { icon: MapPin, title: "Multiple Locations", description: "Convenient pickup points" },
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      
       {/* Hero Section */}
-      <div className="relative h-[600px] bg-gray-900">
-        <div className="absolute inset-0 bg-black/60">
-          <div className="container mx-auto px-4 h-full flex items-center">
-            <div className="max-w-2xl text-white">
-              <h1 className="text-5xl font-bold mb-6">Find Your Perfect Rental Car</h1>
-              <p className="text-xl mb-8">Choose from premium vehicles for your journey</p>
-              
-              <div className="bg-white rounded-lg p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <Label className="text-gray-600">Pickup Location</Label>
-                  <Input placeholder="Enter location" />
+      <div className="relative h-[700px] bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500">
+        <div className="container mx-auto px-4 h-full flex items-center">
+          <div className="max-w-2xl text-white z-10">
+            <h1 className="text-5xl font-bold mb-6 leading-tight">
+              Experience Luxury, 
+              <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">
+                Book Your Premium Ride
+              </span>
+            </h1>
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 grid grid-cols-1 lg:grid-cols-4 gap-4 shadow-xl">
+              <div className="space-y-2">
+                <Label className="text-gray-200">Pickup Location</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input className="pl-10" placeholder="Enter location" />
                 </div>
-                <div>
-                  <Label className="text-gray-600">Pickup Date</Label>
-                  <Input type="date" />
-                </div>
-                <div>
-                  <Label className="text-gray-600">Return Date</Label>
-                  <Input type="date" />
-                </div>
-                <Button className="h-12 mt-auto">
-                  <Search className="mr-2" />
-                  Search
-                </Button>
               </div>
+              <div className="space-y-2">
+                <Label className="text-gray-200">Pickup Date</Label>
+                <Input type="date" className="bg-white/5 border-white/20" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-gray-200">Return Date</Label>
+                <Input type="date" className="bg-white/5 border-white/20" />
+              </div>
+              <Button className="h-12 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
+                <Search className="mr-2" />
+                Search Cars
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Featured Cars */}
+      {/* Features Grid */}
       <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold mb-8">Featured Cars</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {cars.map((car) => (
-            <Card key={car.id} className="hover:shadow-xl transition-shadow">
-              <img
-                src={car.image}
-                alt={car.name}
-                className="w-full h-48 object-cover rounded-t-lg"
-              />
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold">{car.name}</h3>
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 mr-1" />
-                    <span>{car.rating}</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 text-gray-600 mb-6">
-                  <div className="flex justify-between">
-                    <span>Seats</span>
-                    <span>{car.seats}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Transmission</span>
-                    <span>{car.transmission}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Fuel Efficiency</span>
-                    <span>{car.fuel}</span>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-sm text-gray-500">From</p>
-                    <p className="text-2xl font-bold">${car.price}<span className="text-sm font-normal">/day</span></p>
-                  </div>
-                  <Button>Book Now</Button>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-start space-x-4 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <feature.icon className="h-8 w-8 text-blue-600 mt-1" />
+              <div>
+                <h3 className="text-lg font-semibold mb-1">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Footer */}
-    <CustomFooter />
+      {/* Featured Cars Section */}
+      <FeatureCar />
+
+      {/* Brands Section */}
+      {/* <section className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <h3 className="text-gray-500 text-center mb-8">Trusted by leading brands</h3>
+          <div className="grid grid-cols-6 gap-8 opacity-50"> */}
+            {/* Add brand logos here */}
+          {/* </div>
+        </div>
+      </section> */}
+
+      <CustomFooter />
     </div>
   );
 }

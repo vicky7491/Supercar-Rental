@@ -14,13 +14,13 @@ const validateBooking = [
 ];
 
 // ✅ Route: Create Booking
-router.post("/", authUser, validateBooking, bookingController.createBooking);
+router.post("/bookings", authUser, validateBooking, bookingController.createBooking);
 
 // ✅ Route: Get All Bookings (Admin Only)
 router.get("/", authUser, bookingController.getAllBookings);
 
 // ✅ Route: Get User's Bookings
-router.get("/my-bookings", authUser, bookingController.getUserBookings);
+router.get("/my-booking", authUser, bookingController.getUserBookings);
 
 // ✅ Route: Cancel Booking
 router.delete("/:id", authUser, param("id").isMongoId().withMessage("Invalid booking ID"), bookingController.cancelBooking);

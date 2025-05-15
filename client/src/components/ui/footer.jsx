@@ -21,9 +21,9 @@ const CustomFooter = () => (
       <div>
         <h4 className="font-semibold mb-4">Contact</h4>
         <ul className="space-y-2 text-gray-600">
-          <li>+1 234 567 890</li>
+          <li>+91 7050 02 7050</li>
           <li>contact@carrental.com</li>
-          <li>New York, USA</li>
+          <li>Bihar, INDIA</li>
         </ul>
       </div>
       
