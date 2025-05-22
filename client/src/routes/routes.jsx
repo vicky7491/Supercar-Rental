@@ -6,6 +6,9 @@ import Home from "../pages/home-view/Home";
 import NotFound from "../pages/not-found/NotFound";
 import BookingPage from "../pages/home-view/Bookingpage";
 import BookingConfirmation from "../pages/home-view/BokingConfirmation";
+import About from "../pages/home-view/About";
+// import Contact from "../pages/home-view/Contact";
+
 
 const AppRoutes = () => {
   return (
@@ -13,10 +16,12 @@ const AppRoutes = () => {
       <Route path="/" element={<Signup />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Home />} />
+      <Route path="/home" element={<Home />} /> 
       <Route path="/bookings/:carId" element={<BookingPage />} />
       <Route path="/booking-confirmation" element={<BookingConfirmation />} />
-      {/* <Route path="/cars/:id" element={<CarDetailPage />} /> */}
+      <Route path="/about" element={<About />} />
+      {/* <Route path="/contact" element={<Contact/>} /> */}
+    
       <Route path="/not-found" element={<NotFound />} />
        
      

@@ -71,7 +71,7 @@ const Header = () => {
           <NavigationMenu>
             <NavigationMenuList className="flex space-x-6">
               <NavigationMenuItem>
-                <NavigationMenuLink href="/" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition">
+                <NavigationMenuLink href="/home" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition">
                   Home
                 </NavigationMenuLink>
               </NavigationMenuItem>
